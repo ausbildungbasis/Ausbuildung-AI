@@ -1,0 +1,8 @@
+flask
+mysql
+mysql.connector
+requests
+jsonify
+numpy
+sentence_transformers
+scikit-learn
