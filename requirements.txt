@@ -1,5 +1,6 @@
 flask
 mysql
+nltk
 mysql.connector
 requests
 jsonify
