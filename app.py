@@ -45,11 +45,11 @@ def load_candidates():
     processed_candidates = []
     for candidate in candidates:
         full_text = (
-             f"Beschreibung: {candidate['description']}\n"
-             f"Fähigkeiten: {candidate['skills']}\n"
-             f"Erfahrung: {candidate['experiences']}\n"
-             f"Ausbildung: {candidate['education']}"
-    )
+            f"Beschreibung: {candidate['description']}\n"
+            f"Fähigkeiten: {candidate['skills']}\n"
+            f"Erfahrung: {candidate['experiences']}\n"
+            f"Ausbildung: {candidate['education']}"
+        )
         processed_candidates.append({
             "id": candidate["id"],
             "name": f"{candidate['firstname']} {candidate['name']}",
@@ -76,9 +76,8 @@ def rank_candidates(job_description, candidates):
 # Create the Flask application
 app = Flask(__name__)
 
-@app.route('/rank_candidates', methods=['POST'])
+@app.route('/', methods=['POST'])
 def rank_candidates_api():
-
     data = request.get_json()
     if not data or "job_description" not in data:
         return jsonify({"error": "job_description is required"}), 400
