@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import mysql.connector
 import nltk
 from nltk.tokenize import word_tokenize
@@ -86,14 +87,22 @@ def rank_candidates(job_description, candidates):
 
 # Flask API
 app = Flask(__name__)
+CORS(app)
 
-@app.route('/', methods=['POST'])  # Root endpoint
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/', methods=['GET', 'POST'])  
 def rank_candidates_api():
-    data = request.get_json()
-    if not data or "job_description" not in data:
-        return jsonify({"error": "job_description is required"}), 400
-    
-    job_description = preprocess_text(data["job_description"])
+    if request.method == 'GET':
+        job_description = request.args.get("job_description", "")
+    else:  # POST
+        data = request.get_json()
+        if not data or "job_description" not in data:
+            return jsonify({"error": "job_description is required"}), 400
+        job_description = data["job_description"]
+
+    job_description = preprocess_text(job_description)
     
     candidates = load_candidates()
     if not candidates:
