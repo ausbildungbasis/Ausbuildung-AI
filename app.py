@@ -20,8 +20,7 @@ DB_CONFIG = {
     "host": "test.ausbildungsbasis.de",
     "user": "uaixkdmalwgpa",
     "password": "Ausbildungsbasis123?.",
-    "database": "dbbjv8sgihuufp",
-    "ssl_ca": "/etc/ssl/certs/ca-certificates.crt"
+    "database": "dbbjv8sgihuufp"
 }
 
 # Connect to MySQL
