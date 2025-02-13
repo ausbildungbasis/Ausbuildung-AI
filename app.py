@@ -94,7 +94,7 @@ CORS(app)
 
 @app.route('/', methods=['GET'])
 def rank_candidates_api():
-    job_description = request.args.get("job_description", "").strip()
+    job_description = 'Hard Working Candidate'
     
     if not job_description:
         return jsonify({"error": "job_description is required"}), 400
