@@ -6,15 +6,9 @@ from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import os
 
-# Define a persistent directory for NLTK
-nltk_data_dir = "/opt/render/nltk_data"
-os.makedirs(nltk_data_dir, exist_ok=True)
-nltk.data.path.append(nltk_data_dir)  # Add to NLTK path
-
-# Download 'punkt' inside the persistent directory
-nltk.download('punkt', download_dir=nltk_data_dir)
+# Download NLTK requirements
+nltk.download('punkt')
 
 # Use the German Stemmer
 stemmer = SnowballStemmer("german")
