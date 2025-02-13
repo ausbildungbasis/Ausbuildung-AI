@@ -92,15 +92,12 @@ CORS(app)
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/', methods=['GET', 'POST'])  
+@app.route('/', methods=['GET'])
 def rank_candidates_api():
-    if request.method == 'GET':
-        job_description = request.args.get("job_description", "")
-    else:  # POST
-        data = request.get_json()
-        if not data or "job_description" not in data:
-            return jsonify({"error": "job_description is required"}), 400
-        job_description = data["job_description"]
+    job_description = request.args.get("job_description", "").strip()
+    
+    if not job_description:
+        return jsonify({"error": "job_description is required"}), 400
 
     job_description = preprocess_text(job_description)
     
@@ -111,6 +108,7 @@ def rank_candidates_api():
     ranked_candidates = rank_candidates(job_description, candidates)
     
     return jsonify({"ranked_candidates": ranked_candidates[:10]}), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
