@@ -9,6 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Download NLTK requirements
 nltk.download('punkt')
+nltk.download('punkt_tab')
 
 # Use the German Stemmer
 stemmer = SnowballStemmer("german")
