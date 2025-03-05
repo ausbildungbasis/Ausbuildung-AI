@@ -6,6 +6,5 @@ mysql.connector
 requests
 jsonify
 numpy
-sentence_transformers
 scikit-learn
 gunicorn==23.0.0
