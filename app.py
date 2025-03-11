@@ -80,7 +80,7 @@ def rank_candidates(job_description, candidates):
     similarity_scores = cosine_similarity(tfidf_matrix[0], tfidf_matrix[1:])[0]
 
     for i, candidate in enumerate(candidates):
-        candidate["similarity"] = round(float(similarity_scores[i]), 2)
+        candidate["similarity"] = f"{round(float(similarity_scores[i]) * 100, 2)}%"
 
     return sorted(candidates, key=lambda x: x["similarity"], reverse=True)
 
