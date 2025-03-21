@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
@@ -26,6 +25,20 @@ DB_CONFIG = {
 # Connect to MySQL
 def connect_db():
     return mysql.connector.connect(**DB_CONFIG)
+
+# Fetch job description based on job_id
+def fetch_job_description(job_id):
+    conn = connect_db()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute(f"SELECT CONCAT(jobtitle, ' ', description) AS job_info FROM joblistings WHERE id = {job_id};")
+    job = cursor.fetchone()
+    conn.close()
+
+    if not job:
+        return None
+
+    return job["job_info"]
 
 # Fetch and process candidate data
 def load_candidates():
@@ -88,10 +101,14 @@ def rank_candidates(job_description, candidates):
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/', methods=['GET'])
-def rank_candidates_api():
-    job_description = 'Hard Working'
-    
+@app.route('/<int:job_id>', methods=['GET'])
+def rank_candidates_api(job_id):
+    # Fetch job description based on job_id
+    job_description = fetch_job_description(job_id)
+
+    if not job_description:
+        return jsonify({"error": "Job not found"}), 404
+
     if not job_description:
         return jsonify({"error": "job_description is required"}), 400
 
