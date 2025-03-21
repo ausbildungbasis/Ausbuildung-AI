@@ -8,3 +8,4 @@ jsonify
 numpy
 scikit-learn
 gunicorn==23.0.0
+sshtunnel
