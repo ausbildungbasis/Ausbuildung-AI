@@ -1,4 +1,3 @@
-# app.py
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -8,8 +7,6 @@ from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from sshtunnel import SSHTunnelForwarder
-from config import STAGING_CONFIG, LIVE_CONFIG  # Import configurations
 
 # Download NLTK requirements
 nltk.download('punkt')
@@ -18,62 +15,21 @@ nltk.download('punkt_tab')
 # Use the German Stemmer
 stemmer = SnowballStemmer("german")
 
-# Connect to MySQL through SSH tunnel
-def connect_db(ssh_host, ssh_username, ssh_password, ssh_port, db_host, db_user, db_password, db_name):
-    """
-    Connect to a MySQL database through an SSH tunnel.
+# MySQL Configuration
+DB_CONFIG = {
+    "host": "test.ausbildungsbasis.de",
+    "user": "uaixkdmalwgpa",
+    "password": "Ausbildungsbasis123?.",
+    "database": "dbbjv8sgihuufp"
+}
 
-    :param ssh_host: SSH server hostname
-    :param ssh_username: SSH username
-    :param ssh_password: SSH password
-    :param ssh_port: SSH port
-    :param db_host: Database hostname
-    :param db_user: Database username
-    :param db_password: Database password
-    :param db_name: Database name
-    :return: MySQL connection object
-    """
-    try:
-        with SSHTunnelForwarder(
-            (ssh_host, ssh_port),  # SSH server details
-            ssh_username=ssh_username,
-            ssh_password=ssh_password,
-            remote_bind_address=(db_host, 3306)  # Database server details
-        ) as tunnel:
-            # Connect to the database through the SSH tunnel
-            conn = mysql.connector.connect(
-                host='127.0.0.1',  # Localhost because of the tunnel
-                port=tunnel.local_bind_port,  # Local port forwarded by the tunnel
-                user=db_user,
-                password=db_password,
-                database=db_name
-            )
-            return conn
-    except Exception as e:
-        print(f"Failed to connect to the database: {e}")
-        return None
+# Connect to MySQL
+def connect_db():
+    return mysql.connector.connect(**DB_CONFIG)
 
 # Fetch and process candidate data
-def load_candidates(server_type):
-    """
-    Load candidates from the specified server (Staging or Live).
-
-    :param server_type: 'staging' or 'live'
-    :return: List of processed candidates
-    """
-    # Choose the appropriate configuration
-    if server_type == 'staging':
-        config = STAGING_CONFIG
-    elif server_type == 'live':
-        config = LIVE_CONFIG
-    else:
-        raise ValueError("Invalid server type. Use 'staging' or 'live'.")
-
-    # Connect to the database
-    conn = connect_db(**config)
-    if not conn:
-        return []
-
+def load_candidates():
+    conn = connect_db()
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
@@ -135,14 +91,13 @@ CORS(app)
 @app.route('/', methods=['GET'])
 def rank_candidates_api():
     job_description = 'Hard Working'
-    server_type = request.args.get('server', 'staging')  # Default to staging
-
+    
     if not job_description:
         return jsonify({"error": "job_description is required"}), 400
 
     job_description = preprocess_text(job_description)
     
-    candidates = load_candidates(server_type)
+    candidates = load_candidates()
     if not candidates:
         return jsonify({"error": "No candidates found"}), 404
     
