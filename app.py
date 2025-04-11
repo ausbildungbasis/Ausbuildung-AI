@@ -134,7 +134,7 @@ def rank_candidates_api(job_id):
         for candidate in ranked_candidates
     ]
 
-    return jsonify({"ranked_candidates": formatted_candidates[:10]}), 200
+    return jsonify({"ranked_candidates": formatted_candidates[:100]}), 200
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
